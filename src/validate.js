@@ -1,11 +1,11 @@
-import { string, setLocale } from "yup";
+import { string, setLocale } from 'yup';
 
 setLocale({
   string: {
-    url: "feedb_invalid",
+    url: 'feedb_invalid',
   },
   mixed: {
-    notOneOf: "feedb_repeat",
+    notOneOf: 'feedb_repeat',
   },
 });
 
