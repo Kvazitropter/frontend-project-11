@@ -1,5 +1,7 @@
 import isValidUrl from "./validate";
 import onChange from "on-change";
+import i18next from "i18next";
+import ru from "./lng.js";
 
 const rssForm = document.querySelector(".rss-form");
 const urlInput = rssForm.querySelector("#url-input");
@@ -17,6 +19,15 @@ export default () => {
     },
   };
 
+  const i18nextInst = i18next.createInstance();
+  i18nextInst.init({
+    lng: "ru",
+    debug: true,
+    resources: {
+      ru,
+    },
+  });
+
   const watchedState = onChange(state, (path, value) => {
     const inputValue = state.rssForm.value;
     if (path === "rssForm.validation") {
@@ -31,7 +42,7 @@ export default () => {
     } else if (path === "rssForm.state") {
       if (value === "posting") {
         submitBtn.disabled = true;
-        feedback.textContent = "RSS успешно загружен";
+        feedback.textContent = i18nextInst.t("feedb_success");
         state.rssForm.posted.push(inputValue);
         watchedState.rssForm.state = "filling";
       } else {
@@ -51,11 +62,7 @@ export default () => {
       .then(() => (watchedState.rssForm.validation = true))
       .catch((e) => {
         watchedState.rssForm.validation = false;
-        if (e.message.includes("following values")) {
-          watchedState.rssForm.error = "RSS уже существует";
-        } else if (e.message.includes("valid")) {
-          watchedState.rssForm.error = "Ссылка должна быть валидным URL";
-        }
+        watchedState.rssForm.error = i18nextInst.t(e.message);
       });
   });
 
