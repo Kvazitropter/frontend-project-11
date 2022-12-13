@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "rss agregator",
-  "main": "src/index.js",
+  "main": "src/runApp.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -36,6 +36,7 @@
     "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
     "i18next": "^22.1.4",
+    "lodash": "^4.17.21",
     "on-change": "^4.0.2",
     "sass": "^1.56.1",
     "sass-loader": "^13.2.0",
