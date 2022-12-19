@@ -1,9 +1,12 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
-import { getData, parseData, saveData } from './handleData.js';
-import isValidUrl from './isValidUrl.js';
-import ru from './lng.js';
-import viewData from './viewData.js';
+import getData from './handlers/getData';
+import parseData from './handlers/parseData';
+import saveData from './handlers/saveData';
+import updatePostsEveryFiveSec from './handlers/updatePostsEveryFiveSec';
+import isValidUrl from './validator/isValidUrl.js';
+import ru from '../locales/lng.js';
+import { viewFeed, viewPosts } from './viewer/viewData.js';
 
 const rssForm = document.querySelector('.rss-form');
 const input = rssForm.querySelector('#url-input');
@@ -33,17 +36,7 @@ export default () => {
   });
 
   const watchedState = onChange(state, (path, value, _previousValue, applyData) => {
-    const inputValue = state.rssForm.value;
     switch (path) {
-      case 'rssForm.validation':
-        if (value) {
-          input.classList.remove('is-invalid');
-          watchedState.rssForm.state = 'getting';
-        } else {
-          input.classList.add('is-invalid');
-          feedback.classList.replace('text-success', 'text-danger');
-        }
-        break;
       case 'rssForm.state':
         switch (value) {
           case 'filling':
@@ -57,7 +50,6 @@ export default () => {
           case 'proceed':
             feedback.classList.replace('text-danger', 'text-success');
             watchedState.rssForm.message = 'feedb_success';
-            state.rssForm.posted.push(inputValue);
             watchedState.rssForm.state = 'filling';
             break;
           case 'failed':
@@ -69,11 +61,31 @@ export default () => {
             break;
         }
         break;
+      case 'rssForm.validation':
+        if (value) {
+          input.classList.remove('is-invalid');
+          watchedState.rssForm.state = 'getting';
+        } else {
+          input.classList.add('is-invalid');
+          feedback.classList.replace('text-success', 'text-danger');
+        }
+        break;
       case 'rssForm.message':
         feedback.textContent = i18nextInst.t(value);
         break;
+      case 'rssForm.posted':
+        setTimeout(
+          updatePostsEveryFiveSec,
+          5000,
+          watchedState.posts,
+          applyData.args[0],
+        );
+        break;
       case 'feeds':
-        viewData(applyData.args[0], state.posts);
+        viewFeed(applyData.args[0]);
+        break;
+      case 'posts':
+        viewPosts(applyData.args);
         break;
       default:
         break;
@@ -90,6 +102,7 @@ export default () => {
           .then((data) => {
             saveData(watchedState, parseData(data));
             watchedState.rssForm.state = 'proceed';
+            watchedState.rssForm.posted.push(value);
           })
           .catch(() => {
             watchedState.rssForm.state = 'failed';

@@ -23,7 +23,7 @@ const createFeedsLi = (title, description) => {
   pEl.textContent = description;
 
   const liEl = document.createElement('li');
-  liEl.setAttribute('class', 'list-group-elem border-0 border-end-0');
+  liEl.setAttribute('class', 'list-group-item border-0 border-end-0');
   liEl.append(h3El);
   liEl.append(pEl);
   return liEl;
@@ -36,25 +36,25 @@ const createPostsLiEls = (links) => links.map(({ link, name }) => {
     'class',
     'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0',
   );
-  const aStr = `<a class="fw-bold" href="${link}" target="_blank" data-id="${linkId}" rel="noopener norefferer">${name}</a>`;
+  const aStr = `<a class="fw-bold" href="${link}" target="_blank" data-id="${linkId}" rel="noopener norefferer"></a>`;
   const btnStr = `<button class="btn btn-outline-primary btn-sm" type="button" data-id="${linkId}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`;
   liEl.innerHTML = `${aStr}\n${btnStr}`;
+  liEl.firstElementChild.textContent = name;
   return liEl;
 });
 
-export default (feed, allPosts) => {
+export const viewFeed = (feed) => {
   const feedsCardUl = document.querySelector('.feeds .list-group')
     ?? createCard('Фиды', feedsDiv);
-  const postsCardUl = document.querySelector('.posts .list-group')
-    ?? createCard('Посты', postsDiv);
-
-  const { id, content } = feed;
+  const { content } = feed;
   const { title, description } = content;
-  const [{ links }] = allPosts.filter(({ feedId }) => feedId === id);
-
   const feedLiEl = createFeedsLi(title, description);
   feedsCardUl.prepend(feedLiEl);
+};
 
-  const postsLiEls = createPostsLiEls(links);
+export const viewPosts = (posts) => {
+  const postsCardUl = document.querySelector('.posts .list-group')
+    ?? createCard('Посты', postsDiv);
+  const postsLiEls = createPostsLiEls(posts);
   postsLiEls.forEach((el) => postsCardUl.prepend(el));
 };
