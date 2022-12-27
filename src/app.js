@@ -3,10 +3,11 @@ import i18next from 'i18next';
 import getData from './handlers/getData';
 import parseData from './handlers/parseData';
 import saveData from './handlers/saveData';
-import updatePostsEveryFiveSec from './handlers/updatePostsEveryFiveSec';
+import updatePosts from './handlers/updatePosts';
 import isValidUrl from './validator/isValidUrl.js';
 import ru from '../locales/lng.js';
 import { viewFeed, viewPosts } from './viewer/viewData.js';
+import viewLink from './viewer/viewLink';
 
 const rssForm = document.querySelector('.rss-form');
 const input = rssForm.querySelector('#url-input');
@@ -24,6 +25,9 @@ export default () => {
     },
     feeds: [],
     posts: [],
+    uiState: {
+      postLinks: [],
+    },
   };
 
   const i18nextInst = i18next.createInstance();
@@ -75,9 +79,10 @@ export default () => {
         break;
       case 'rssForm.posted':
         setTimeout(
-          updatePostsEveryFiveSec,
+          updatePosts,
           5000,
-          watchedState.posts,
+          watchedState,
+          state.posts,
           applyData.args[0],
         );
         break;
@@ -85,9 +90,10 @@ export default () => {
         viewFeed(applyData.args[0]);
         break;
       case 'posts':
-        viewPosts(applyData.args);
+        viewPosts(applyData.args, watchedState.uiState);
         break;
       default:
+        viewLink(path.slice(0, -5), state);
         break;
     }
   });
@@ -100,7 +106,7 @@ export default () => {
         watchedState.rssForm.validation = true;
         getData(value)
           .then((data) => {
-            saveData(watchedState, parseData(data));
+            saveData(watchedState, state, parseData(data));
             watchedState.rssForm.state = 'proceed';
             watchedState.rssForm.posted.push(value);
           })

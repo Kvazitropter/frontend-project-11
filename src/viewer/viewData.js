@@ -1,5 +1,3 @@
-import { uniqueId } from 'lodash';
-
 const feedsDiv = document.querySelector('.feeds');
 const postsDiv = document.querySelector('.posts');
 
@@ -29,17 +27,43 @@ const createFeedsLi = (title, description) => {
   return liEl;
 };
 
-const createPostsLiEls = (links) => links.map(({ link, name }) => {
+const modalTitle = document.querySelector('.modal-title');
+const modalDesc = document.querySelector('.modal-body');
+const modalBtnReadFull = document.querySelector('.full-article');
+
+const viewModal = (title, description, link) => {
+  modalTitle.textContent = title;
+  modalDesc.textContent = description;
+  modalBtnReadFull.setAttribute('href', link);
+};
+
+const createPostsLiEls = (links, uiState) => links.map(({
+  id, title, description, link,
+}) => {
   const liEl = document.createElement('li');
-  const linkId = uniqueId();
   liEl.setAttribute(
     'class',
     'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0',
   );
-  const aStr = `<a class="fw-bold" href="${link}" target="_blank" data-id="${linkId}" rel="noopener norefferer"></a>`;
-  const btnStr = `<button class="btn btn-outline-primary btn-sm" type="button" data-id="${linkId}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`;
+  const aStr = `<a class="fw-bold" href="${link}" target="_blank" data-id="${id}" rel="noopener norefferer"></a>`;
+  const btnStr = `<button class="btn btn-outline-primary btn-sm" type="button" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`;
   liEl.innerHTML = `${aStr}\n${btnStr}`;
-  liEl.firstElementChild.textContent = name;
+
+  const aEl = liEl.firstElementChild;
+  aEl.textContent = title;
+  const btn = liEl.lastElementChild;
+
+  btn.addEventListener('click', () => {
+    const [postUIState] = uiState.postLinks.filter(({ postId }) => postId === id);
+    postUIState.read = true;
+    viewModal(title, description, link);
+  });
+
+  aEl.addEventListener('click', () => {
+    const [postUIState] = uiState.postLinks.filter(({ postId }) => postId === id);
+    postUIState.read = true;
+  });
+
   return liEl;
 });
 
@@ -52,9 +76,9 @@ export const viewFeed = (feed) => {
   feedsCardUl.prepend(feedLiEl);
 };
 
-export const viewPosts = (posts) => {
+export const viewPosts = (posts, uiState) => {
   const postsCardUl = document.querySelector('.posts .list-group')
     ?? createCard('Посты', postsDiv);
-  const postsLiEls = createPostsLiEls(posts);
-  postsLiEls.forEach((el) => postsCardUl.prepend(el));
+  const postsLiEls = createPostsLiEls(posts, uiState);
+  postsLiEls.forEach((el) => postsCardUl.append(el));
 };
