@@ -2,7 +2,7 @@ import onChange from 'on-change';
 import i18next from 'i18next';
 import getData from './handlers/getData';
 import parseData from './handlers/parseData';
-import saveData from './handlers/saveData';
+import { saveData } from './handlers/saveData';
 import updatePosts from './handlers/updatePosts';
 import isValidUrl from './validator/isValidUrl.js';
 import ru from '../locales/lng.js';
@@ -46,6 +46,7 @@ export default () => {
           case 'filling':
             submitBtn.disabled = false;
             state.rssForm.validation = null;
+            state.rssForm.value = '';
             rssForm.reset();
             break;
           case 'getting':
@@ -53,13 +54,11 @@ export default () => {
             break;
           case 'proceed':
             feedback.classList.replace('text-danger', 'text-success');
-            watchedState.rssForm.message = 'feedb_success';
             watchedState.rssForm.state = 'filling';
             break;
           case 'failed':
             submitBtn.disabled = false;
             feedback.classList.replace('text-success', 'text-danger');
-            watchedState.rssForm.message = 'feedb_fail';
             break;
           default:
             break;
@@ -82,15 +81,16 @@ export default () => {
           updatePosts,
           5000,
           watchedState,
-          state.posts,
+          state,
           applyData.args[0],
+          state.feeds[state.feeds.length - 1].id,
         );
         break;
       case 'feeds':
         viewFeed(applyData.args[0]);
         break;
       case 'posts':
-        viewPosts(applyData.args, watchedState.uiState);
+        viewPosts(applyData.args, watchedState.uiState, i18nextInst.t('viewBtn'));
         break;
       default:
         viewLink(path.slice(0, -5), state);
@@ -106,12 +106,19 @@ export default () => {
         watchedState.rssForm.validation = true;
         getData(value)
           .then((data) => {
-            saveData(watchedState, state, parseData(data));
-            watchedState.rssForm.state = 'proceed';
-            watchedState.rssForm.posted.push(value);
+            try {
+              saveData(watchedState, state, parseData(data));
+              watchedState.rssForm.posted.push(value);
+              watchedState.rssForm.state = 'proceed';
+              watchedState.rssForm.message = 'feedback.success';
+            } catch {
+              watchedState.rssForm.state = 'failed';
+              watchedState.rssForm.message = 'feedback.fail_parse';
+            }
           })
           .catch(() => {
             watchedState.rssForm.state = 'failed';
+            watchedState.rssForm.message = 'feedback.fail_get';
           });
       })
       .catch((er) => {

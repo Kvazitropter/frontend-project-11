@@ -37,7 +37,7 @@ const viewModal = (title, description, link) => {
   modalBtnReadFull.setAttribute('href', link);
 };
 
-const createPostsLiEls = (links, uiState) => links.map(({
+const createPostsLiEls = (links, uiState, btnText) => links.map(({
   id, title, description, link,
 }) => {
   const liEl = document.createElement('li');
@@ -46,7 +46,7 @@ const createPostsLiEls = (links, uiState) => links.map(({
     'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0',
   );
   const aStr = `<a class="fw-bold" href="${link}" target="_blank" data-id="${id}" rel="noopener norefferer"></a>`;
-  const btnStr = `<button class="btn btn-outline-primary btn-sm" type="button" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`;
+  const btnStr = `<button class="btn btn-outline-primary btn-sm" type="button" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modal">${btnText}</button>`;
   liEl.innerHTML = `${aStr}\n${btnStr}`;
 
   const aEl = liEl.firstElementChild;
@@ -65,7 +65,7 @@ const createPostsLiEls = (links, uiState) => links.map(({
   });
 
   return liEl;
-});
+}).reverse();
 
 export const viewFeed = (feed) => {
   const feedsCardUl = document.querySelector('.feeds .list-group')
@@ -76,9 +76,9 @@ export const viewFeed = (feed) => {
   feedsCardUl.prepend(feedLiEl);
 };
 
-export const viewPosts = (posts, uiState) => {
+export const viewPosts = (posts, uiState, viewBtnText) => {
   const postsCardUl = document.querySelector('.posts .list-group')
     ?? createCard('Посты', postsDiv);
-  const postsLiEls = createPostsLiEls(posts, uiState);
-  postsLiEls.forEach((el) => postsCardUl.append(el));
+  const postsLiEls = createPostsLiEls(posts, uiState, viewBtnText);
+  postsLiEls.forEach((el) => postsCardUl.prepend(el));
 };

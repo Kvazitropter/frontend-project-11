@@ -1,12 +1,13 @@
 import { uniqueId } from 'lodash';
 
-export default (watchedState, state, parsedData) => {
-  const { newFeed, newPosts } = parsedData;
-  const feedId = uniqueId();
+const saveNewFeed = (watchedState, feed, id) => {
+  watchedState.feeds.push({ id, content: feed });
+};
 
+export const saveNewPosts = (watchedState, state, posts, feedId) => {
   const newUIStates = [];
   const newPostsWithId = [];
-  newPosts.forEach(({ title, description, link }) => {
+  posts.forEach(({ title, description, link }) => {
     const postId = uniqueId();
     newUIStates.push({ postId, read: false });
     newPostsWithId.push({
@@ -18,7 +19,14 @@ export default (watchedState, state, parsedData) => {
     });
   });
 
-  watchedState.feeds.push({ id: feedId, content: newFeed });
   watchedState.posts.push(...newPostsWithId);
   state.uiState.postLinks.push(...newUIStates);
+};
+
+export const saveData = (watchedState, state, parsedData) => {
+  const { newFeed, newPosts } = parsedData;
+  const feedId = uniqueId();
+
+  saveNewFeed(watchedState, newFeed, feedId);
+  saveNewPosts(watchedState, state, newPosts, feedId);
 };
