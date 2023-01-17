@@ -9,7 +9,7 @@
 
 Этот проект реализует сервис, представляющий rss-поток в виде ссылок на посты с возможностью просмотра их описания и проверяющий его на наличие новых постов.
 
-![Preview](./images/preview.png)
+[![Preview](./images/preview.png)](https://frontend-project-11-pu79rnwyc-kvazitropter.vercel.app/)
 
 [![Deployment](https://img.shields.io/badge/-Click%20to%20try-black?style=for-the-badge)](https://frontend-project-11-pu79rnwyc-kvazitropter.vercel.app/)
 
