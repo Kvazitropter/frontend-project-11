@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS Agregator</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <main class="flex-grow-1">
+      <section class="container-fluid bg-dark p-5">
+        <div class="row">
+          <div class="col-md-10 col-lg-8 mx-auto text-white">
+            <h1 class="display-3 m-0">RSS агрегатор</h1>
+            <p class="fs-5 fw-light">Начните читать RSS сегодня! Это легко, это красиво.</p>
+            <form action="" class="rss-form">
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating">
+                    <input id="url-input" autofocus="" required="" name="url" aria-label="url" placeholder="ссылка RSS" autocomplete="off" class="form-control">
+                    <label for="url-input" class="text-dark">Ссылка RSS</label>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <button type="submit" aria-label="add" class="btn btn-lg btn-primary px-sm-5 h-100">Добавить</button>
+                </div>
+              </div>
+            </form>
+            <p class="mt-2 mb-0 text-secondary">Пример: https://lorem-rss.hexlet.app/feed</p>
+            <p class="feedback m-0 small position-absolute text-danger">Ссылка должна быть валидным URL</p>
+          </div>
+        </div>
+      </section>
+      <section class="container-fluid container-xxl p-5">
+        <div class="row">
+          <div class="col-md-10 col-lg-8 order-1 mx-auto posts"></div>
+          <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer border-top py-3 mt-5 bg-light">
+      <div class="container-xl">
+        <div class="text-center">created by <a href="https://ru.hexlet.io/professions/frontend/projects/11" target="_blank">Hexlet</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

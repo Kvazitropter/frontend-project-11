@@ -1,8 +1,10 @@
 name: eslint
 
 on:
-  - push
-  - pull_request
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   eslint:
@@ -15,10 +17,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21'
+
       - name: Install eslint
         run: npm install eslint@8.57.0
 
       - name: Run eslint
-        run: npx eslint .
-          --config .eslintrc.js
-          --ext .js
+        run: npx eslint . --config .eslintrc.yml --ext .js
