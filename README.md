@@ -18,3 +18,9 @@ git clone git@github.com:Kvazitropter/frontend-project-11.git
 make install
 make start
 ```
+
+---
+
+## Deploy:
+
+[Versel](https://frontend-project-11-theta-eight.vercel.app/)
