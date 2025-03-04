@@ -1,10 +1,11 @@
-import { string } from 'yup';
+import { string, setLocale } from 'yup';
 import i18next from 'i18next';
 import watcher from './watcher.js';
 import resources from './locales/index.js';
+import locale from './locales/locale.js';
 
 const validateUrl = async (url, existingUrls) => {
-  const schema = string().url('invalidUrl').required().notOneOf(existingUrls, 'repeatedUrl');
+  const schema = string().url().required().notOneOf(existingUrls);
   return schema.validate(url);
 };
 
@@ -35,6 +36,7 @@ export default () => {
     resources,
   }).then(() => {
     const watchedState = watcher(state, elements, i18nextInstance);
+    setLocale(locale);
 
     elements.rssForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -50,6 +52,7 @@ export default () => {
           watchedState.rssForm.error = null;
         })
         .catch((err) => {
+          console.error(err);
           watchedState.rssForm.state = 'invalid';
           watchedState.rssForm.error = err.message;
         });
