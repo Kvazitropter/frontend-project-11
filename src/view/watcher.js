@@ -43,12 +43,11 @@ const handleValidation = (validationState, { urlInput, feedbackMessage }) => {
 };
 
 const addFeed = ({ args: [feed] }, { feedsContainer }, i18nextInstance, prevFeeds) => {
-  if (_.size(prevFeeds) === 0) {
+  if (_.isEmpty(prevFeeds)) {
     createCard(i18nextInstance.t('feeds'), feedsContainer);
   }
 
   const { title, description } = feed;
-  // console.log(feed);
   const feedsUl = feedsContainer.querySelector('.list-group');
   const feedLi = document.createElement('li');
   feedLi.setAttribute('class', 'list-group-item border-0 border-end-0');
@@ -64,12 +63,11 @@ const addFeed = ({ args: [feed] }, { feedsContainer }, i18nextInstance, prevFeed
 };
 
 const addPost = ({ args: [post] }, { postsContainer }, i18nextInstance, prevPosts) => {
-  if (_.size(prevPosts) === 0) {
+  if (_.isEmpty(prevPosts)) {
     createCard(i18nextInstance.t('posts'), postsContainer);
   }
 
   const { id, title, link } = post;
-  // console.log(post);
   const postsUl = postsContainer.querySelector('.list-group');
   const postLi = document.createElement('li');
   postLi.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0');
@@ -95,7 +93,6 @@ const addPost = ({ args: [post] }, { postsContainer }, i18nextInstance, prevPost
 export default (state, elements, i18nextInstance) => onChange(
   state,
   (path, value, prevValue, applyData) => {
-    // console.log(path, applyData);
     switch (path) {
       case 'rssForm.state':
         handleStateChange(value, elements);
