@@ -1,8 +1,8 @@
 export default {
   mixed: {
-    notOneOf: 'repeatedUrl',
+    notOneOf: 'error.repeatedUrl',
   },
   string: {
-    url: 'invalidUrl',
+    url: 'error.invalidUrl',
   },
 };

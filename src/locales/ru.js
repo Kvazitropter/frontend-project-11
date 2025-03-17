@@ -1,7 +1,9 @@
 export default {
   translation: {
-    feedback: {
+    loading: {
       success: 'RSS успешно загружен',
+    },
+    error: {
       invalidUrl: 'Ссылка должна быть валидным URL',
       repeatedUrl: 'RSS уже существует',
       noRss: 'Ресурс не содержит валидный RSS',

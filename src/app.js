@@ -11,11 +11,11 @@ import updatePosts from './handlers/updatePosts.js';
 
 const getErrorMessage = (e) => {
   if (e.isAxiosError) {
-    return 'network';
+    return 'error.network';
   } if (e.isParsingError) {
-    return 'noRss';
+    return 'error.noRss';
   }
-  return 'unknown';
+  return 'error.unknown';
 };
 
 export default () => {
@@ -70,7 +70,7 @@ export default () => {
               saveData(watchedState, parseData(data));
               watchedState.links.add(inputUrl);
               watchedState.rssForm.state = 'idle';
-              watchedState.rssForm.feedback = 'success';
+              watchedState.rssForm.feedback = 'loading.success';
             })
             .then(() => {
               updatePosts(inputUrl, watchedState, timeout);

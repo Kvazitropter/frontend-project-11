@@ -62,7 +62,13 @@ const addFeed = ({ args: [feed] }, { feedsContainer }, i18nextInstance, prevFeed
   feedsUl.prepend(feedLi);
 };
 
-const addPost = ({ args: [post] }, { postsContainer }, i18nextInstance, prevPosts) => {
+const addPost = (
+  { args: [post] },
+  { postsContainer },
+  i18nextInstance,
+  prevPosts,
+  watchedState,
+) => {
   if (_.isEmpty(prevPosts)) {
     createCard(i18nextInstance.t('posts'), postsContainer);
   }
@@ -78,6 +84,9 @@ const addPost = ({ args: [post] }, { postsContainer }, i18nextInstance, prevPost
   linkEl.setAttribute('href', link);
   linkEl.setAttribute('data-id', id);
   linkEl.textContent = title;
+  linkEl.addEventListener('click', () => {
+    watchedState.uiState.viewedPostLinks.add(id);
+  });
   postLi.append(linkEl);
   const btn = document.createElement('button');
   btn.setAttribute('type', 'button');
@@ -86,33 +95,62 @@ const addPost = ({ args: [post] }, { postsContainer }, i18nextInstance, prevPost
   btn.setAttribute('data-bs-target', '#modal');
   btn.setAttribute('data-id', id);
   btn.textContent = i18nextInstance.t('viewBtn');
+  btn.addEventListener('click', () => {
+    _.set(watchedState, 'uiState.modal', id);
+    watchedState.uiState.viewedPostLinks.add(id);
+  });
   postLi.append(btn);
   postsUl.prepend(postLi);
 };
 
-export default (state, elements, i18nextInstance) => onChange(
-  state,
-  (path, value, prevValue, applyData) => {
-    switch (path) {
-      case 'rssForm.state':
-        handleStateChange(value, elements);
-        break;
-      case 'rssForm.validationState':
-        handleValidation(value, elements);
-        break;
-      case 'rssForm.feedback':
-        elements.feedbackMessage.replaceChildren(i18nextInstance.t(`feedback.${value}`));
-        break;
-      case 'links':
-        break;
-      case 'feeds':
-        addFeed(applyData, elements, i18nextInstance, prevValue);
-        break;
-      case 'posts':
-        addPost(applyData, elements, i18nextInstance, prevValue);
-        break;
-      default:
-        throw new Error('unknown state path');
-    }
-  },
-);
+const viewPostInModal = (id, { modal }, watchedState) => {
+  const modalHeader = modal.querySelector('.modal-content .modal-header');
+  const modalDescription = modal.querySelector('.modal-content .modal-body');
+  const modalLinkToFull = modal.querySelector('.modal-content .modal-footer .full-article');
+  const { title, description, link } = _.find(watchedState.posts, { id });
+  modalHeader.textContent = title;
+  modalDescription.textContent = description;
+  modalLinkToFull.setAttribute('href', link);
+};
+
+const viewPostLink = ({ args: [id] }, { postsContainer }) => {
+  const postLinkEl = postsContainer.querySelector(`.list-group-item a[data-id="${id}"]`);
+  postLinkEl.classList.replace('fw-bold', 'fw-normal');
+  postLinkEl.classList.add('link-secondary');
+};
+
+export default (state, elements, i18nextInstance) => {
+  const watchedState = onChange(
+    state,
+    (path, value, prevValue, applyData) => {
+      switch (path) {
+        case 'rssForm.state':
+          handleStateChange(value, elements);
+          break;
+        case 'rssForm.validationState':
+          handleValidation(value, elements);
+          break;
+        case 'rssForm.feedback':
+          elements.feedbackMessage.replaceChildren(i18nextInstance.t(value));
+          break;
+        case 'links':
+          break;
+        case 'feeds':
+          addFeed(applyData, elements, i18nextInstance, prevValue);
+          break;
+        case 'posts':
+          addPost(applyData, elements, i18nextInstance, prevValue, watchedState);
+          break;
+        case 'uiState.modal':
+          viewPostInModal(value, elements, watchedState);
+          break;
+        case 'uiState.viewedPostLinks':
+          viewPostLink(applyData, elements);
+          break;
+        default:
+          throw new Error('unknown state path');
+      }
+    },
+  );
+  return watchedState;
+};
