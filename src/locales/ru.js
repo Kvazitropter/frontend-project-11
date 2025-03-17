@@ -4,10 +4,11 @@ export default {
       success: 'RSS успешно загружен',
     },
     error: {
+      empty: 'Не должно быть пустым',
       invalidUrl: 'Ссылка должна быть валидным URL',
       repeatedUrl: 'RSS уже существует',
       noRss: 'Ресурс не содержит валидный RSS',
-      networkError: 'Ошибка сети',
+      network: 'Ошибка сети',
       unknown: 'Неизвестная ошибка. Что-то пошло не так.',
     },
     feeds: 'Фиды',

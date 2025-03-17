@@ -4,5 +4,6 @@ export default {
   },
   string: {
     url: 'error.invalidUrl',
+    required: 'error.empty',
   },
 };
